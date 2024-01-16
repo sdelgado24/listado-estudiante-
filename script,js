@@ -1,0 +1,148 @@
+// Script para el CRUD de estudiantes
+
+// Variables globales
+let students = [];
+let studentId = 1;
+
+// Función para agregar un estudiante
+function addStudent(event) {
+  event.preventDefault();
+  
+  // Obtener los valores del formulario
+  const nameInput = document.getElementById('name');
+  const ageInput = document.getElementById('age');
+  const emailInput = document.getElementById('email');
+  const phoneInput = document.getElementById('phone');
+  const name = nameInput.value;
+  const age = parseInt(ageInput.value);
+  const email = emailInput.value;
+  const phone = phoneInput.value;
+
+  // Validar que los campos no estén vacíos
+  if (name === '' || isNaN(age) || email === '' || phone === '') {
+    alert('Por favor, completa todos los campos correctamente.');
+    return;
+  }
+
+  // Crear un nuevo estudiante
+  const student = {
+    id: studentId,
+    name: name,
+    age: age,
+    email: email,
+    phone: phone
+  };
+
+  // Incrementar el ID para el siguiente estudiante
+  studentId++;
+
+  // Agregar el estudiante al arreglo
+  students.push(student);
+
+  // Limpiar los campos del formulario
+  nameInput.value = '';
+  ageInput.value = '';
+  emailInput.value = '';
+  phoneInput.value = '';
+
+  // Actualizar la tabla
+  displayStudents();
+
+  // Mensaje de éxito
+  alert('Estudiante agregado exitosamente.');
+}
+
+// Función para mostrar los estudiantes en la tabla
+function displayStudents() {
+  const tableBody = document.getElementById('student-table').getElementsByTagName('tbody')[0];
+  tableBody.innerHTML = '';
+
+  students.forEach(function(student) {
+    const row = tableBody.insertRow();
+
+    const idCell = row.insertCell(0);
+    idCell.innerHTML = student.id;
+
+    const nameCell = row.insertCell(1);
+    nameCell.innerHTML = student.name;
+
+    const ageCell = row.insertCell(2);
+    ageCell.innerHTML = student.age;
+
+    const emailCell = row.insertCell(3);
+    emailCell.innerHTML = student.email;
+
+    const phoneCell = row.insertCell(4);
+    phoneCell.innerHTML = student.phone;
+
+    const actionsCell = row.insertCell(5);
+    const editButton = document.createElement('button');
+    editButton.innerHTML = 'Editar';
+    editButton.className = 'btn btn-primary';
+    editButton.onclick = function() {
+      editStudent(student.id);
+    };
+    actionsCell.appendChild(editButton);
+
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = 'Eliminar';
+    deleteButton.className = 'btn btn-danger';
+    deleteButton.onclick = function() {
+      deleteStudent(student.id);
+    };
+    actionsCell.appendChild(deleteButton);
+  });
+}
+
+// Función para eliminar un estudiante
+function deleteStudent(id) {
+  students = students.filter(function(student) {
+    return student.id !== id;
+  });
+
+  displayStudents();
+
+  alert('Estudiante eliminado exitosamente.');
+}
+
+// Función para editar un estudiante
+function editStudent(id) {
+  const student = students.find(function(student) {
+    return student.id === id;
+  });
+
+  if (!student) {
+    alert('No se encontró el estudiante.');
+    return;
+  }
+
+  const name = prompt('Ingrese el nuevo nombre:', student.name);
+  const age = prompt('Ingrese la nueva edad:', student.age);
+  const email = prompt('Ingrese el nuevo correo electrónico:', student.email);
+  const phone = prompt('Ingrese el nuevo número de teléfono:', student.phone);
+
+  if (name === null || age === null || email === null || phone === null) {
+    return;
+  }
+
+  student.name = name;
+  student.age = parseInt(age);
+  student.email = email;
+  student.phone = phone;
+
+  displayStudents();
+
+  alert('Estudiante actualizado exitosamente.');
+}
+
+// Función para listar los estudiantes (opcional)
+function listStudents() {
+  console.log('Lista de estudiantes:');
+  students.forEach(function(student) {
+    console.log(`ID: ${student.id}, Nombre: ${student.name}, Edad: ${student.age}, Correo Electrónico: ${student.email}, Teléfono: ${student.phone}`);
+  });
+}
+
+// Manejador de eventos para el formulario
+const form = document.getElementById('student-form');
+form.addEventListener('submit', addStudent);
